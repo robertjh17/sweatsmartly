@@ -1,0 +1,43 @@
+name: Deploy Next.js standalone build to Azure Web App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build with Next.js standalone output
+        run: npm run build
+
+      - name: Copy files for Azure deployment
+        run: |
+          mkdir deploy-folder
+          cp -r .next/standalone/* deploy-folder
+          cp -r .next/static deploy-folder/.next/
+          cp -r public deploy-folder/public
+          cp package.json deploy-folder/
+          cp next.config.mjs deploy-folder/
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'SweatSmartly'
+          slot-name: 'Production'
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE }}
+          package: deploy-folder
