@@ -1,12 +1,12 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { creditPackages, CreditPackageId } from '@/lib/creditPackages'
 import CheckoutForm from '@/components/checkout/CheckoutForm'
 import { Box, Text, Link } from '@chakra-ui/react'
 
-export default function CheckoutPage() {
+function CheckoutPageInner() {
   const searchParams = useSearchParams()
   const [creditPack, setCreditPack] = useState<{ credits: number; price: string } | null>(null)
   const [packageId, setPackageId] = useState<CreditPackageId | null>(null)
@@ -32,4 +32,12 @@ export default function CheckoutPage() {
   }
 
   return <CheckoutForm creditPack={creditPack} packageId={packageId} />
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={null}>
+      <CheckoutPageInner />
+    </Suspense>
+  )
 }
