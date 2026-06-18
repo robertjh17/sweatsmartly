@@ -32,6 +32,9 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+# ...but DO track placeholder production values so the Vercel build can complete.
+# Real secrets belong in the Vercel dashboard (they override this file at build & runtime).
+!.env.production
 
 # vercel
 .vercel
